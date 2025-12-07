@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import ArtifactFrame from "./ArtifactFrame";
 import ProphetModal from "./ProphetModal";
@@ -10,8 +10,23 @@ import { getArtifacts } from "@/lib/artifacts";
 export default function MuseumHall() {
   const [selectedArtifact, setSelectedArtifact] = useState<Artifact | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [dimensions, setDimensions] = useState({ width: 1920, height: 1080 });
   
   const artifacts = getArtifacts();
+
+  useEffect(() => {
+    // Set dimensions after mount (client-side only)
+    if (typeof window !== 'undefined') {
+      setDimensions({ width: window.innerWidth, height: window.innerHeight });
+      
+      const handleResize = () => {
+        setDimensions({ width: window.innerWidth, height: window.innerHeight });
+      };
+      
+      window.addEventListener('resize', handleResize);
+      return () => window.removeEventListener('resize', handleResize);
+    }
+  }, []);
 
   const handleArtifactClick = (artifact: Artifact) => {
     setSelectedArtifact(artifact);
@@ -110,15 +125,15 @@ export default function MuseumHall() {
               key={i}
               className="absolute w-1 h-1 bg-prophet-gold rounded-full opacity-20"
               initial={{
-                x: Math.random() * window.innerWidth,
-                y: Math.random() * window.innerHeight,
+                x: Math.random() * dimensions.width,
+                y: Math.random() * dimensions.height,
               }}
               animate={{
-                y: [null, -100, window.innerHeight + 100],
+                y: [null, -100, dimensions.height + 100],
                 x: [
                   null,
-                  Math.random() * window.innerWidth,
-                  Math.random() * window.innerWidth,
+                  Math.random() * dimensions.width,
+                  Math.random() * dimensions.width,
                 ],
               }}
               transition={{
