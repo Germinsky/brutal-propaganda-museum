@@ -1,3 +1,5 @@
+"use client";
+
 import MuseumHall from "@/components/MuseumHall";
 
 export default function Home() {
